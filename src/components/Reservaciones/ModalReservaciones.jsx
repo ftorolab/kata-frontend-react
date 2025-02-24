@@ -5,12 +5,14 @@ import { serverFetchPost } from '../../services/request';
 import "./Reservaciones.css";
 
 function ModalReservaciones({onClose, modalData}) {
+    const [seats, setSeats] = useState([]);
+    const [isMovie, setIsMovie] = useState(false);
     let dataCompleted = {};
     const [formData, setFormData] = useState({
-        movie_id: '',
-        schedule: '',
-        selected_seats: '',
-        email: ''
+        movie_id: '3',
+        schedule: '2024-02-24 00:00:00',
+        selected_seats: 'G2',
+        email: 'ftoro@bancodebogota.com.co'
       });
     const modalDetails = createRef();
     const formDataRef = useRef(formData);
@@ -27,15 +29,12 @@ function ModalReservaciones({onClose, modalData}) {
         }));
       };
       const componentIds = [
-        '#inputTitle',
-        '#inputGenre',
-        '#inputDuration',
-        '#inputRating',
-        '#dropRoom',
+        '#inputEmail',
+        '#inputGenre'
       ];
 
     const optionsDropdown =`[
-        {"text":"Sala 1","value":"1"}
+        {"text":"Sala 1","value":"3"}
       ]`;
     const openModal = () => {
         if (
@@ -65,19 +64,19 @@ function ModalReservaciones({onClose, modalData}) {
         
         console.log('dataCompleted', dataCompleted)
         try {
-            const response = await serverFetchPost({ url: 'http://localhost:3002/api/movies', data: dataCompleted });
-            console.log('Movie added:', response);
+            const response = await serverFetchPost({ url: 'http://localhost:3002/api/reservations', data: dataCompleted });
+            console.log('Reservation added:', response);
         } catch (error) {
-            console.error("Error adding movie:", error);
+            console.error("Error adding reservation:", error);
         }
-        window.location.href = '/peliculas';
+        // window.location.href = '/reservations';
     };
     
       useEffect(() => {
         openModal();
-        const componentModal = document.querySelector('bdb-ml-drawer');
+        const componentModal = document.querySelector('bdb-ml-modal-normal');
         if (componentModal) {
-          componentModal.addEventListener('eCloseDrawer', (e) => {
+          componentModal.addEventListener('clickedCancelModalBtn', (e) => {
             onClose();
           });
         }
@@ -108,13 +107,14 @@ function ModalReservaciones({onClose, modalData}) {
             component.addEventListener('atInputChanged', listener);
           }
         });
-        const dropdownTypeDocument = document.getElementById('dropRoom');
+        const dropdownTypeDocument = document.getElementById('dropMovie');
         if (dropdownTypeDocument) {
           dropdownTypeDocument.addEventListener('elementSelectedAtom', (e) => {
             setFormData((prevData) => ({
               ...prevData,
               [e.detail.name]: parseInt(e.detail.value),
             }));
+            setIsMovie(true)
           });
         }
       }, [])
@@ -124,9 +124,20 @@ function ModalReservaciones({onClose, modalData}) {
             <div className='containerModal' id='containerModal'>
             <bdb-ml-modal-normal ref={modalDetails} size-modal="lg" titlemodal="Reservar">
             <div slot='body-modal'>
+              <div className='inputTxt'>
+                <bdb-at-input
+                    id='inputEmail'
+                    name='email'
+                    label='Email'
+                    type='EMAIL'
+                    required='true'
+                    view-mode
+                    value={modalData ? modalData.data.raiting : ''}
+                ></bdb-at-input>
+                </div>
                 <div className='inputTxt'>
                 <bdb-at-dropdown
-                    id='dropRoom'
+                    id='dropMovie'
                     name='movie_id'
                     label='Pelicula'
                     status='ENABLED'
@@ -135,17 +146,10 @@ function ModalReservaciones({onClose, modalData}) {
                     defaultvalue={modalData ? modalData.data.id_room : ''}
                 ></bdb-at-dropdown>
                 </div>
-                <div className='inputTxt'>
-                <bdb-at-input
-                    id='inputDate'
-                    name='schedule'
-                    label='Horario'
-                    type='DATE'
-                    required='true'
-                    view-mode
-                    value={modalData ? modalData.data.raiting : ''}
-                ></bdb-at-input>
-                </div>
+                {isMovie && (
+                  <bdb-ml-multi-selector is-check label="Selecciones los asientos a reservar" values-to-card='[{"title" : "G1","desc": "sala 1","value": "0", "isChecked": "false", "tagName": "Disponible", "disabled": false},{"title" : "G2","desc": "sala 1","value": "1", "isChecked": "false", "tagName": "Disponible", "disabled": false}]'></bdb-ml-multi-selector>
+                )
+                }
                 <div className='containerButtons'>
                 <div className='containerButton1'>
                     <button
