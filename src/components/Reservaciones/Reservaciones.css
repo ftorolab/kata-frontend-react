@@ -1,0 +1,74 @@
+@import "../../bdb-webcomponents.scss";
+
+* {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+
+.insContainer2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-height: 500px;
+}
+
+.containerCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (min-width: 1025px) {
+    .insContainer {
+        min-height: 650px;
+    }
+}
+@media screen and (min-width: 600px) and (max-width: 1024px) {
+    .insContainer {
+        width: 185px;
+    }
+}
+@media screen and (max-width: 599px) {
+    .insContainer {
+        width: -webkit-fill-available;
+    }
+}
+
+.my-4{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.containerOptions1{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.containerButton1 {
+    @media (max-width: 599px) {
+        width: 100%;
+        order: 2;
+    }
+}
+
+.containerButton2 {
+    @media (max-width: 599px) {
+        width: 100%;
+        order: 1;
+    }
+}
+
+.containerButtons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    @media (max-width: 599px) {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    
+}
