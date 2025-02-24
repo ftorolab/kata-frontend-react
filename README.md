@@ -1,6 +1,4 @@
-# Template for project Test - React.
-
-## Available Scripts
+# Kata-Frontend-React.
 
 Run the next command to install all dependencies:
 
