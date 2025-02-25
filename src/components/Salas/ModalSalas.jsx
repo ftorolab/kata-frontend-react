@@ -19,7 +19,6 @@ function ModalSalas({onClose, modalData}) {
 
     const handleInputEvent = (e) => {
         const { name, value } = e.detail;
-        console.log('first', value)
         setFormData((prevData) => ({
           ...prevData,
           [name]: name !== 'capacity' ? value : parseInt(value),

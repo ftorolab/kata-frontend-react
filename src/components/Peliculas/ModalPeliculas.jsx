@@ -6,6 +6,7 @@ import "./Peliculas.css";
 
 function ModalPeliculas({onClose, modalData}) {
     let dataCompleted = {};
+    const [optionsRooms, setOptionsRooms] = useState({})
     const [formData, setFormData] = useState({
         title: '',
         genre: '',
@@ -21,7 +22,6 @@ function ModalPeliculas({onClose, modalData}) {
 
     const handleInputEvent = (e) => {
         const { name, value } = e.detail;
-        console.log('first', value)
         setFormData((prevData) => ({
           ...prevData,
           [name]: name !== 'duration' ? value : parseInt(value),
@@ -34,10 +34,15 @@ function ModalPeliculas({onClose, modalData}) {
         '#inputRating',
         '#dropRoom',
       ];
-
-    const optionsDropdown =`[
-        {"text":"Sala 1","value":"1"}
-      ]`;
+      
+      const transformedValues = () => {
+        const rooms = sessionStorage.getItem('rooms') ? JSON.parse(sessionStorage.getItem('rooms')) :[];
+        return JSON.stringify(rooms.map(room => ({
+          text: room.name,
+          value: room.id
+        })));
+      }
+      
     const openModal = () => {
         if (
           modalDetails.current &&
@@ -76,6 +81,7 @@ function ModalPeliculas({onClose, modalData}) {
     
       useEffect(() => {
         openModal();
+        setOptionsRooms(transformedValues())
         const componentModal = document.querySelector('bdb-ml-drawer');
         if (componentModal) {
           componentModal.addEventListener('eCloseDrawer', (e) => {
@@ -188,7 +194,7 @@ function ModalPeliculas({onClose, modalData}) {
                     label='Sala'
                     status='ENABLED'
                     placeholder='Seleccione'
-                    options={optionsDropdown}
+                    options={optionsRooms}
                     defaultvalue={modalData ? modalData.data.id_room : ''}
                 ></bdb-at-dropdown>
                 </div>

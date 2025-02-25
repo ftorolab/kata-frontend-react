@@ -6,6 +6,7 @@ import "./Reservaciones.css";
 
 function ModalReservaciones({onClose, modalData}) {
     const [seats, setSeats] = useState([]);
+    const [optionsMovies, setOptionsMovies] = useState({})
     const [isMovie, setIsMovie] = useState(false);
     let dataCompleted = {};
     const [formData, setFormData] = useState({
@@ -19,23 +20,29 @@ function ModalReservaciones({onClose, modalData}) {
     useEffect(() => {
         formDataRef.current = formData;
     }, [formData]);
+    const transformedValues = () => {
+      const movies = sessionStorage.getItem("movies")
+        ? JSON.parse(sessionStorage.getItem("movies"))
+        : [];
+      return JSON.stringify(
+        movies.map((movie) => ({
+          text: movie.title,
+          value: movie.id,
+        }))
+      );
+    };
 
     const handleInputEvent = (e) => {
         const { name, value } = e.detail;
-        console.log('first', value)
         setFormData((prevData) => ({
           ...prevData,
           [name]: name !== 'duration' ? value : parseInt(value),
         }));
       };
       const componentIds = [
-        '#inputEmail',
-        '#inputGenre'
+        '#inputEmail'
       ];
 
-    const optionsDropdown =`[
-        {"text":"Sala 1","value":"3"}
-      ]`;
     const openModal = () => {
         if (
           modalDetails.current &&
@@ -61,7 +68,6 @@ function ModalReservaciones({onClose, modalData}) {
         dataCompleted = (modalData
         ? {...dataBefore, ...dataUpdated }
         : {...formDataRef.current});
-        
         console.log('dataCompleted', dataCompleted)
         try {
             const response = await serverFetchPost({ url: 'http://localhost:3002/api/reservations', data: dataCompleted });
@@ -69,11 +75,12 @@ function ModalReservaciones({onClose, modalData}) {
         } catch (error) {
             console.error("Error adding reservation:", error);
         }
-        // window.location.href = '/reservations';
+        window.location.href = '/reservas';
     };
     
       useEffect(() => {
         openModal();
+        setOptionsMovies(transformedValues())
         const componentModal = document.querySelector('bdb-ml-modal-normal');
         if (componentModal) {
           componentModal.addEventListener('clickedCancelModalBtn', (e) => {
@@ -142,12 +149,12 @@ function ModalReservaciones({onClose, modalData}) {
                     label='Pelicula'
                     status='ENABLED'
                     placeholder='Seleccione'
-                    options={optionsDropdown}
+                    options={optionsMovies}
                     defaultvalue={modalData ? modalData.data.id_room : ''}
                 ></bdb-at-dropdown>
                 </div>
                 {isMovie && (
-                  <bdb-ml-multi-selector is-check label="Selecciones los asientos a reservar" values-to-card='[{"title" : "G1","desc": "sala 1","value": "0", "isChecked": "false", "tagName": "Disponible", "disabled": false},{"title" : "G2","desc": "sala 1","value": "1", "isChecked": "false", "tagName": "Disponible", "disabled": false}]'></bdb-ml-multi-selector>
+                  <bdb-ml-multi-selector is-check label="Selecciones los asientos a reservar" values-to-card='[{"title" : "G1","desc": "sala 1","value": "0", "isChecked": "false", "tagName": "Disponible", "disabled": false},{"title" : "G2","desc": "sala 1","value": "1", "isChecked": "false", "tagName": "Disponible", "disabled": false},{"title" : "G3","desc": "sala 1","value": "1", "isChecked": "false", "tagName": "Disponible", "disabled": false}]'></bdb-ml-multi-selector>
                 )
                 }
                 <div className='containerButtons'>

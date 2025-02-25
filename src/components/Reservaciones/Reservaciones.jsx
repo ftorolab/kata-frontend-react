@@ -11,10 +11,12 @@ function Reservaciones() {
     const openAndCloseModal = (flag, data) => {
         setShowModal(flag);
     };
+
+    
     
 
     useEffect(() => {
-        async function fetchMovies() {
+        async function fetchReservations() {
             try {
                 const data = await serverFetchGet({ url: 'http://localhost:3002/api/reservations' });
                 const transformedValues = JSON.stringify(data.map(reservation => ({
@@ -30,7 +32,21 @@ function Reservaciones() {
                 console.error("Error fetching movies:", error);
             }
         }
-        fetchMovies();
+        const movies = sessionStorage.getItem('movies') ? JSON.parse(sessionStorage.getItem('movies')) : null;
+        async function fetchRooms() {
+          try {
+            if (movies === null) {
+              const data = await serverFetchGet({
+                url: "http://localhost:3002/api/movies",
+              });
+              sessionStorage.setItem("movies", JSON.stringify(data));
+            }
+          } catch (error) {
+            console.error("Error fetching movies:", error);
+          }
+        }
+        fetchReservations();
+        fetchRooms()
     }, []);
     
 

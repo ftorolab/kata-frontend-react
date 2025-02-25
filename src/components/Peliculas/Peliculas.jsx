@@ -7,6 +7,7 @@ import "./Peliculas.css";
 
 function Peliculas() {
     const [movies, setMovies] = useState([]);
+    const [rooms, setRooms] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const openAndCloseModal = (flag, data) => {
         setShowModal(flag);
@@ -14,6 +15,7 @@ function Peliculas() {
     
 
     useEffect(() => {
+
         async function fetchMovies() {
             try {
                 const data = await serverFetchGet({ url: 'http://localhost:3002/api/movies' });
@@ -22,14 +24,26 @@ function Peliculas() {
                 console.error("Error fetching movies:", error);
             }
         }
+        const rooms = sessionStorage.getItem('rooms') ? JSON.parse(sessionStorage.getItem('rooms')) : null;
+        async function fetchRooms() {
+            try {
+                if (rooms === null) {
+                    const data = await serverFetchGet({ url: 'http://localhost:3002/api/rooms' });
+                    setRooms(data);
+                    sessionStorage.setItem('rooms', JSON.stringify(data));
+                }
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+            }
+        }
         fetchMovies();
+        fetchRooms();
     }, []);
 
     useEffect(() => {
       const selector = document.querySelector("bdb-ml-horizontal-selector");
       if (selector) {
         selector.addEventListener("mlHorizontalSelectorClicked", (e) => {
-          console.log("first", e.detail);
           if (e.detail.value === "0") {
             openAndCloseModal(true, {});
           }
